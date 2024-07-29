@@ -1,15 +1,35 @@
 // import React from 'react';
 import { Link } from "react-router-dom";
 import { IProduct } from "../interface/Product";
+import { useState, useEffect } from "react";
+import { ICategory } from "../interface/Category";
+import { GetAllCategory } from "../service/category";
 
 type Props = {
   products: IProduct[];
 };
 
+
+
+
 const BestSellers = ({ products }: Props) => {
   const topSellingProducts = products
-    .sort((a, b) => b.sales - a.sales)
+    .sort((a, b) => b.order - a.order)
     .slice(0, 4);
+
+    const [categories, setCategories] = useState<ICategory[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const categoryData = await GetAllCategory();
+      setCategories(categoryData);
+    })();
+  }, []);
+
+  const getCategoryName = (id: string) => {
+    const category = categories.find((cate) => cate.id === id);
+    return category ? category.name : "Unknown";
+  };
   
   return (
     <div>
@@ -39,7 +59,7 @@ const BestSellers = ({ products }: Props) => {
                 {product.name}
               </h3>
               <div className=" flex justify-between w-full mb-5 px-4 pb-2">
-                <p className="text-[#777777] text-[12px]">{product.category}</p>
+                <p className="text-[#777777] text-[12px]">{getCategoryName(product.categoryId)}</p>
                 {product.sale ? (
                   <>
                     <p>

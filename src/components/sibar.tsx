@@ -1,5 +1,8 @@
-
+import { useEffect, useState } from "react";
 import "../css/Sidebar.css";
+import { ICategory } from "../interface/Category";
+import { GetAllCategory } from "../service/category";
+
 const img = [
   {
     id: 1,
@@ -10,53 +13,81 @@ const img = [
   },
 ];
 
-const Sidebar = () => {
+type SidebarProps = {
+  slCategory: string[];
+  setslCategory: (categories: string[]) => void;
+};
+
+const Sidebar = ({ slCategory, setslCategory }: SidebarProps) => {
+  const [categories, setCategories] = useState<ICategory[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fullCategories = await GetAllCategory();
+        setCategories(fullCategories);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleCheckbox = (id: string) => {
+    if (slCategory.includes(id)) {
+      setslCategory(slCategory.filter((catId) => catId !== id));
+    } else {
+      setslCategory([...slCategory, id]);
+    }
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
         <h2>Kategorien</h2>
       </div>
       <ul className="sidebar-list">
-        <li>
-          <input type="checkbox" name="" id="" /> Eckige Töpfe
-        </li>
-        <li>
-          <input type="checkbox" name="" id="" /> Runde Töpfe
-        </li>
-        <li>
-          <input type="checkbox" name="" id="" /> Untersetzer
-        </li>
-        <li>
-          <input type="checkbox" name="" id="" /> Pflanzschalen
-        </li>
+        {categories.map((cat) => (
+          <li key={cat.id}>
+            <input
+              type="checkbox"
+              value={cat.id}
+              checked={slCategory.includes(cat.id)}
+              onChange={() => handleCheckbox(cat.id)}
+            />
+            <span>{cat.name}</span>
+          </li>
+        ))}
       </ul>
       <div className="sidebar-footer">
-        {img.map((img) => {
-          return (
-            <div key={img.id} className="sidebar-item">
-              <img src={img.src} alt={img.alt} />
-              <div className="sidebar-item-text">
-                <h3>{img.text}</h3>
-                <p>
-                  {img.store}
-                  <i className="fa-solid fa-circle-right"></i>
-                </p>
-              </div>
+        {img.map((img) => (
+          <div key={img.id} className="sidebar-item">
+            <img src={img.src} alt={img.alt} />
+            <div className="sidebar-item-text">
+              <h3>{img.text}</h3>
+              <p>
+                {img.store}
+                <i className="fa-solid fa-circle-right"></i>
+              </p>
             </div>
-          );
-        })}
+          </div>
+        ))}
         <div className="sidebar-filters">
           <div className="filter-price">
             <label>Filter By Price:</label>
-            <input type="number" id="price-from" min="0" max="8000" />
-            <input type="number" id="price-to" min="0" max="8000" />
-            <button type="button">Filter</button>
+            <input type="range" id="price-from" min="0" max="8000" />
+            <div className="Filter">
+              <p>From $0 to $8000</p>
+              <p>Filter</p>
+            </div>
           </div>
           <div className="filter-size">
             <label>Filter By Size:</label>
-            <input type="number" id="size-min" />
-            <input type="number" id="size-max" />
-            <button type="button">Filter</button>
+            <input type="range" id="price-from" min="0" max="32" />
+            <div className="Filter">
+              <p>2 mm by 50</p>
+              <p>Filter</p>
+            </div>
           </div>
         </div>
       </div>

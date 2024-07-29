@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { IProduct } from "../interface/Product";
 import "../css/ProductDetail.css";
+
+import axios from "axios";
+import { useState, useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { CartContext } from "../context/cartContext";
+import { IProduct } from "../interface/Product";
+import { ICategory } from "../interface/Category";
+import { GetAllCategory } from "../service/category";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +14,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const context = useContext(CartContext);
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
   if (!context) {
     return <p>Error</p>;
@@ -27,26 +31,38 @@ const ProductDetail = () => {
         setProduct(response.data);
         setSelectedImage(response.data.image);
       } catch (error) {
-        console.error("LOIIIIII", error);
+        console.error("Error fetching product:", error);
       }
     };
 
     fetchProduct();
   }, [id]);
 
+  useEffect(() => {
+    (async () => {
+      const categoryData = await GetAllCategory();
+      setCategories(categoryData);
+    })();
+  }, []);
+
+  const getCategoryName = (id: string) => {
+    const category = categories.find((cate) => cate.id === id);
+    return category ? category.name : "Unknown";
+  };
+
   if (!product) {
-    return <div>Loading...</div>;
+    return <h3 className="text-center">Sản phẩm không tồn tại</h3>;
   }
 
   const phantramsale = product.sale
     ? ((product.price - product.salePrice) / product.price) * 100
     : 0;
 
-  const giamsoluong = () => {
+  const tangsoluong = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
-  const tangsoluong = () => {
+  const giamsoluong = () => {
     if (quantity > 1) {
       setQuantity((prevQuantity) => prevQuantity - 1);
     }
@@ -57,12 +73,10 @@ const ProductDetail = () => {
   };
 
   const saotb =
-    product.reviews.reduce((acc, review) => acc + review.rating, 0) /
-    product.reviews.length;
-
-  const sosao = [1, 2, 3, 4, 5].map(
-    (star) => product.reviews.filter((review) => review.rating === star).length
-  );
+    product.reviews.length === 0
+      ? 0
+      : product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        product.reviews.length;
 
   const soluongsaodanhgia = (rating: number) => {
     const stars = [];
@@ -103,7 +117,7 @@ const ProductDetail = () => {
         </div>
         <div className="thongtin">
           <p className="uppercase">
-            <span>{product.category}</span>
+            <span>{getCategoryName(product.categoryId)}</span>
           </p>
           <h3>{product.name}</h3>
           <p className="discription">{product.discription}</p>
@@ -122,18 +136,18 @@ const ProductDetail = () => {
           </div>
           <div className="tinh">
             <div className="quantity-controls">
-              <button onClick={tangsoluong} disabled={quantity <= 1}>
+              <button onClick={giamsoluong} disabled={quantity <= 1}>
                 -
               </button>
               <span>{quantity}</span>
-              <button onClick={giamsoluong}>+</button>
+              <button onClick={tangsoluong}>+</button>
             </div>
             <div>
               <button
                 className="btn-add-cart"
                 onClick={() => addToCart(product, quantity)}
               >
-                <i className="fa-solid fa-cart-shopping"></i> Add to Cart
+                <i className="fa-solid fa-cart-shopping"></i> Thêm vào giỏ
               </button>
             </div>
           </div>
@@ -141,9 +155,9 @@ const ProductDetail = () => {
       </div>
       <div className="danhgia">
         <div className="chitetsanpham">
-          <h3>Discription</h3>
+          <h3>Mô tả</h3>
           <p>{product.discription}</p>
-          <h3>About</h3>
+          <h3>Thông tin</h3>
           <p>{product.about}</p>
         </div>
         <div className="danhgiasanpham">
@@ -152,29 +166,38 @@ const ProductDetail = () => {
             <div className="star-rating">
               <span className="tb">{soluongsaodanhgia(Math.round(saotb))}</span>
               <p>
-                {saotb.toFixed(1)}
-                <span className="sl">({product.reviews.length})</span>
+                <span>
+                  {product.reviews.length > 0 && ` (${saotb.toFixed(1)})`}
+                </span>
+                <span className="sl">
+                  ({product.reviews.length === 0 ? 0 : product.reviews.length})
+                </span>
               </p>
             </div>
           </div>
           <div className="rating-summary">
-            {sosao.map((count, index) => (
-              <div key={index} className="star-bar">
-                <span>
-                  {index + 1}
-                  <i className="fa fa-star" style={{ color: "#3b4047" }} />
-                </span>
-                <div className="bar">
-                  <div
-                    className="fill"
-                    style={{
-                      width: `${(count / product.reviews.length) * 100}%`,
-                    }}
-                  ></div>
+            {[1, 2, 3, 4, 5].map((star) => {
+              const count = product.reviews.filter(
+                (review) => review.rating === star
+              ).length;
+              return (
+                <div key={star} className="star-bar">
+                  <span>
+                    {star}
+                    <i className="fa fa-star" style={{ color: "#3b4047" }} />
+                  </span>
+                  <div className="bar">
+                    <div
+                      className="fill"
+                      style={{
+                        width: `${(count / product.reviews.length) * 100}%`,
+                      }}
+                    ></div>
+                  <span>({count})</span>
+                  </div>
                 </div>
-                <span>({count})</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="reviews">
             <div className="cmt"></div>

@@ -33,18 +33,20 @@ const ProductContext = ({ children }: Props) => {
         }
     };
 
-    const onSubmitUpdate = async (formData: formType, id: string ) => {
+    const onSubmitUpdate = async (formData: formType, id: string) => {
         try {
-            const data = await EditProduct(formData, id);
-            const newproducts = products.map((product) =>
-                product.id == id ? data : product
-            );
-            setProducts(newproducts);
-            alert("Cập nhật thành công");
+          const productToUpdate = { ...formData };
+          const data = await EditProduct(productToUpdate, id);
+          const updatedProducts = products.map((product) =>
+            product.id === id ? { ...product, ...data } : product
+          );
+          setProducts(updatedProducts);
+          alert("Cập nhật thành công");
+          console.log(updatedProducts)
         } catch (error) {
-            console.log(error);
+          console.log(error);
         }
-    };
+      };
 
     const onAdd = async (dataproduct: formType) => {
         try {

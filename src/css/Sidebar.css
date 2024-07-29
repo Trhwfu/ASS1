@@ -92,7 +92,7 @@
   .sidebar-filters {
     font-weight: bold;
     margin-top: 20px;
-    display: flex;
+
     flex-direction: column;
   }
   
@@ -121,5 +121,13 @@
     color: #fff;
     border: none;
     cursor: pointer;
+  }
+  .Filter{
+    display: flex;
+    justify-content: space-between;
+  }
+  .Filter p{
+    font-size: small;
+    font-weight: 400;
   }
   

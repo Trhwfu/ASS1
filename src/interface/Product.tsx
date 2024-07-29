@@ -6,7 +6,8 @@ export interface IProduct {
   image3: string;
   price: number;
   salePrice: number;
-  category: string;
+  order: number;
+  categoryId: string;
   sales: number;
   discription: string;
   about: string;
@@ -19,5 +20,5 @@ export interface IProduct {
   quantity: number;
 }
 
-export type formType = Pick<IProduct,'name'|'price'|'image'|'image2'|'image3'|'category'|'salePrice'|'discription'|'about'|'sale'>
-export type cartType = Pick<IProduct,'name'|'price'|'image'|'sale'|'category'|'salePrice'>
+export type formType = Pick<IProduct,'name'|'price'|'image'|'image2'|'image3'|'categoryId'|'salePrice'|'discription'|'about'|'sale'>
+export type cartType = Pick<IProduct,'name'|'price'|'image'|'sale'|'categoryId'|'salePrice'>

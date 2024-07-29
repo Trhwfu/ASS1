@@ -13,6 +13,10 @@ import ProductContext from './context/productContext';
 import ListProductAdmin from './components/admin/productlistAdmin';
 import AddProduct from './components/admin/AddAdmin';
 import EditProduct from './components/admin/EditAdmin';
+import CategoryContext from './context/categoryContext';
+import AddCategory from './components/admin/AddCategory';
+import EditCategory from './components/admin/EditCategory';
+
 
 function App() {
   const routes = useRoutes([
@@ -35,13 +39,17 @@ function App() {
       path: 'admin',
       element: (
         <ProductContext>
-          <LayoutAdmin />
+          <CategoryContext>
+            <LayoutAdmin />
+          </CategoryContext>
         </ProductContext>
       ),
       children: [
            { path: '', element:<ListProductAdmin/> },
            { path: 'add', Component:AddProduct },
            { path: 'edit/:id', element:<EditProduct/> },
+           { path: 'category/edit/:id', element:<EditCategory/> },
+           { path: 'category/add',Component:AddCategory },
       ],
     },
   ]);

@@ -9,17 +9,27 @@ export const GetAllCategory = async ()=>{
         console.log(err)
     }
 }
+// eslint-disable-next-line react-refresh/only-export-components
 export const deleteCategory = async (id:string)=>{
     try{
-        const {data} = await instance.delete(`category/:${id}`)
-        return data
+        await instance.delete(`category/${id}`); 
+      
     }catch(err){
         console.log(err)
     }
 }
-export const EditCategory = async (id:string, formcategory:ICategory)=>{
+export const GetCategoryId  = async (id:string)=>{
     try{
-        const {data} = await instance.put(`category/:${id}`, formcategory)
+        const {data} = await instance.get(`category/${id}`)
+        return data
+    }catch(err){
+        console.log(err)
+    }
+ }
+
+export const EditCategory = async ( formcategory:ICategory,id:string)=>{
+    try{
+        const {data} = await instance.put(`category/${id}`, formcategory)
         return data
     }catch(err){
         console.log(err)

@@ -1,7 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { productCT } from "../../context/productContext";
 import { IProduct } from "../../interface/Product";
 import { Link } from "react-router-dom";
+import { GetAllCategory } from "../../service/category";
+import { ICategory } from "../../interface/Category";
 
 type ListAdminProps = {
   products: IProduct[];
@@ -9,6 +11,19 @@ type ListAdminProps = {
 
 const ListAdmin: React.FC<ListAdminProps> = ({ products }) => {
   const { onDelete } = useContext(productCT);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const categoryData = await GetAllCategory();
+      setCategories(categoryData);
+    })();
+  }, []);
+
+  const getCategoryName = (id: string) => {
+    const category = categories.find((cate) => cate.id === id);
+    return category ? category.name : "Unknown";
+  };
 
   return (
     <div className="p-6">
@@ -23,6 +38,7 @@ const ListAdmin: React.FC<ListAdminProps> = ({ products }) => {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá sale</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sale</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thể loại</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">lượt bán</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
           </tr>
         </thead>
@@ -38,7 +54,8 @@ const ListAdmin: React.FC<ListAdminProps> = ({ products }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.price}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.salePrice}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.sale ? 'Yes' : 'No'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getCategoryName(product.categoryId)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.order}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <Link to={`/admin/edit/${product.id}`} className="text-blue-600 hover:text-blue-900 mr-4">Sửa</Link>
                   <button 
