@@ -8,6 +8,7 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 16px;
     padding: 26px;
+    transition: ease-in-out 0.3s;
 }
 
 .collection .items .item{
@@ -29,6 +30,7 @@
 
 .collection .items .item img{
     width: 100%;
+    justify-content: center;
     -webkit-filter: brightness(70%); 
     transition: ease-in-out 0.3s;
 }
@@ -40,25 +42,29 @@
 .collection .items .item .inf{
     position: absolute;
     top: 20px;
-    left: 180px;
+    left: 0;
     width: 100%;
     color: #ffffff;
     padding: 10px;
     font-size: 14px;
     transition: ease-in-out 0.3s;
 }
-.collection .items .item:hover .inf{
+.collection .items .item:hover .inf {
     background-color: rgba(0,0,0,0.6);
-    transition: background-color 0.3s ease-in-out;
+    transition: ease-in-out 0.3s;
     padding: 10px;
     top: 20px;
-    left: 180px;
-    width: 100%;
+    left: 50%;
+    width: 50%;
     color: #ffffff;
     padding: 10px;
     font-size: 14px;
-    transition: background-color 0.3s ease-in-out;
+    
 }
 .collection .items .item .inf span{
     font-weight: bold;
+    
+}
+.collection .items .item .inf .tt:hover{
+    transition: ease-in-out 0.3s;
 }

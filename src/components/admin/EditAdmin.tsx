@@ -11,7 +11,6 @@ const EditProduct: React.FC = () => {
   const { onSubmitUpdate } = useContext(productCT);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [product, setProduct] = useState<IProduct | null>(null);
-  const [catselect,setCatselect] = useState<number|string>()
   const {
     register,
     handleSubmit,
@@ -28,7 +27,6 @@ const EditProduct: React.FC = () => {
         try {
           const fetchedProduct = await GetProduct(id);
           setProduct(fetchedProduct);
-          setCatselect(fetchedProduct.categoryId)
           reset({
             name: fetchedProduct.name,
             image: fetchedProduct.image,

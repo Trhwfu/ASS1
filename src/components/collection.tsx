@@ -1,76 +1,66 @@
 // import React from 'react'
+import { useEffect, useState } from "react";
 import "../css/colletion.css";
+import { ICategory } from "../interface/Category";
+import { GetAllCategory } from "../service/category";
+import { GetAllProduct } from "../service/product";
+import { IProduct } from "../interface/Product";
 
 const Collection = () => {
-  const collection = [
-    {
-      id: 1,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_EoV3ucqedahpyiBfgmic4LoagogSwGz4Bu33mHmaou6IecRzOTIBPiRj2riIRB1f9ygAOLQb0cqsgnbzTNvWbKiHZAS6HHXRW49YM1ANPWW-BQ3LRCyAcBk9A7WnkNRlpCXwwsW9KKwTffWo7zKDNScKaXyOzTR77YUK6PrB5o--35OK1ebAlUQyQvUBYe_a8qEe64WYacQNRTH0EtmibDM6rAchrhwnClFQHA8ml3bgXpDlYsVjephBJ48-qSt5QokkHtuWQmFhRFqBq1Hbpw1IZABiX8sOpNq3HTgtmmAaVk5MP7dUqkamzX_5M9Tp_eXVJkYna_qLONkMJUBP_76VzH9087sXqnKSbcdpkAF0V9QGtwW3LxuQXUfGH5uZM05Jnv77fGQsSPC_sDx0-k-Zy0FgFE_5cO2DKurDNnYt4TUG_xJ6rGTM3Vu0oVfjyV4uvTJV6SKwGaC_kzGeYvXlDVdVHk_SAD4kEIkEEQhAjE_JgUB8wwUlQNvnqKxgrLorLtesvTi-4N9w8xb0H-lWmXvl2GXebjRQ_8mrLAbGLyw3MlHQQHQT0LWwyVf1Dv9UP_acm6MAb5JfcNXj_sQedAJ1GBCR3nPnYCfTHE7CsIOkN_hypKcpenH_fAUi5vNKkqD27qjB97tbSb9OHcGYpMYD2rf0ii_Of4aCCzN_yLmXwOI-piIYktx5XIjr1LzZDwA4Wl5uBq9RvtB5OHPpMLRggV8uhbE8F1pO6IErUfMvFKP17-x6bfXMAxq4gqsqhiVZ59OV-tAOOZN2jxqFK7HfuJg6SBv_K6NYHpjtys8_cwyM_PhSCYWeA6uL13hkYwkp15MnmdblBsl9HS5fZwJY4aL8m1d2184zWKKC6xjCI5wrtO_qFkGjBv8Flm5fmih_tfJ18Tl0vwY0tjeQWLoVUm1_Q11fC0zZZQttnKHYh3-msWpWRhr5deghFC5jwmDscWIMXXhv7u28jlG3lW-9gVT4kGcCU5b6bqBVgcwj7ZZWgMNYA06ZzTYmAjNer37vkpE4AJ17OdVs4blhNTmIY7CON43TSWeG7x0Lc57n4Q_g9oS1OE9_1T66yKdxrfl3880LoS0fPD3aO_jjDsjRpdf5_uOmCv7UOMCrsjN0kEi8JfdBazQeUtOGC8axUmG0s8GLZY2KNvDnLWTpYbC52i8jDisH8kmkBaWVU7CNCopCpkEftdTlbjEPW50cDSsJ2yU1bZDCphFQsjheQpchCentDU91A6VbTOBmgRPjfujKY5wBmVaw7XPhWt29PeUex_SPF1kgUhPIJ89bOpnZkMBrBPq6H7gFvxxruPXQ7iMnPyheeCP8b49AzUkBEsTPs0p169i-Nz86Sgq39T2UpKSryIF2r6Y1mPkoT9WgS3EDdiixttdovHmEiq1o9GEmNtC1DUh1GbeiTKCzoqGoia5WmoGVVm41Dc4Z_KQiavMYapVSoc4ZXATI0az3ZAefgwopkPkSawIlWiBiMoV6eDnJZjZxlABhu9MdKx5N4Qk5dZYgHKa4cRUAvRmU1TpWFDLu_1n1pV0DsbGn6w-xZTlJ28Uy-dzm_G2yzXutfHqbnx6TjAtfcyHo7dqWLVOqhFQocUG69sxEJG18C768rER9Llh7lxY5OnXZC89HhuL6N5lZ2zYYZUucG3IIgIrpAacdrKNrYspcEJE9DNy31d-XH89SjM8tpGs25RhsvLwbDGkF-eBq0=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "30 items",
-    },
-    {
-      id: 2,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_HxYcKoCdK19kRJHPr8bdwSdp8rMzra07eiyEh1N6kh2t4Jkw-WxdVKM9gLxSlL177-8IxT5YBtJ6DP6h-j9MuDav_wfda6j-HPStl7oo7mJ6kBNuUugumnSRtcL0aph7vLK2ZnFfwnlQVLSkZjZGQmULYgpmR1nEeB-BWdLXcluCVQcUheOWqGyT9Nw75-iK_RNqNb5-MFZ8sGcboPMp22N-zh4JfbHKAK8DC7OaNdXaoOW_H4jvvFL86GBGdPQK4Lk4qDu6376gOKBHIi9NcjAjJeH7rM-joA-lgBOCn_mF6b44OS4aC-E2V_lKqbCnOape384P1UD89cFU7xcP1f6IjscHa-mkHGY4r3a3Li1SjiIHoQc4c5TiVyA8vnGMmokXeOR4SXyrBY16SgDml9LGFl3j18lbwNeGOBMtUt6pJitOnWZeDZvVid9Hvv0_G9bKkpGwt2yQ9AJb08LBTeAStAcLACtYMxxVHVY9B-8XT8v-OGwzjRmsl9WEL2G79_AI7Sf3WdxcCp-IBj5gZX7mXy-l61K966fxjA1teeaf5LHYUgCVqYF31rOxGJ3BqBr5BgE0q5tpGnjgh8ygaql_vc2X4zf-SuqxNvA86GK6HRwnfPXXiMvwiI4oCPzGF3bIsbXVnxKrLi264Cj2r3-tYH_ngaVYL-tcjsLt7l1abkRG0ufegn8pJsLLpGUbpulL4WmV3IkkxTGJgY2LI_YqJeUZ0mKYfzyelzBLZHmDKfXp3-RWQ-evf9wvM1AaVKzmcAPCkSp1mrn0AylTylUqBzUUz9Ubeh--aQR5zcn_04tQG3B4sxd8azpxYwu-KJX-t8J7ewwjh4djPIX9MB5cNcewvz5EOWl4JP1mW6kB0TKTGAB1MTStINRTyQuivx0zsvnHti028rg2oqF9reSYOlTOaAFVcE9DH7PSVLFKvBMjeDABm6eU_ejtP1qe4x00auGZR9PHELpOjtm30rUmvrw_PvdwAL18-dfJMHgoOTa6yLLhNf9cYK9paNxLgGnBTKo0VC99Ki92sdRuu9WpR72KzOQHroM16nBg9LR0cdHQdrpF-i1L19q3XXbG8ICJEu_HmcHv5ECAGBRnuv8hHeZ0GIrt4oklTyEy6c06GOeegsrt_z6iRc0zlqCVX7wKVtTlUzbblrkLz27sVh631CLmonhHyQVoq_3cxrwdwUfhFuGu6NnS7jUEHLlciAFTOY54gC3DL9KAl2M61SQFefVRRZwmuqwvWPSONNK67KGRxVu1Pz7yOVC5tQHtMHIZ8BCkq5g7UvK6ZaqJpGtQDBWVMoLYs8yVI4IJdI-hCKvSr0R2pP3eJSV4vrGZgum9oORA5i4fTEFgm8sN0HGZ_7UdwsKW4liVupV_QE_WM2CTGAXKvKjuLxQgk68MI9cRLQ7Wex7gCe3EeqmpFY0plHxCvB5JmqazHGuWr1ox64ol8Dtig91xg2Om6zNEtk0F_47u54D7bJ8tJbqX7Iy9HZJhcGQmyvF1HJ1mHe75Er57WvzY0oZsWNkJEZeCIoL0gAr9rDayP3YlW3QJuhbltRphZAXPMydSW9IgdYm5p3cMZk2TEk9i9YHWtNPO6-fTpNbeKmbY2e2UZwksb4zFn4Auew97_u6ZvjsI4Ll6AQ_we-advDSVd2WCluwBbnIddUiLeRSygu7yL5fWYsFSIPU8LYuRvLPrHPV7EZ6ibwF4yc7TC5AbH6lw8=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "20 items",
-    },
-    {
-      id: 3,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_FUGZY6JAW8XSzeEqUE9ZDBpfE6GxUZKX7KF3setnVv4PaCNmv7owBWTtsl6_n27a5ymm4W31j4Gbp8oMrh6jYlcO-B39J54oNCGxwCdjy3OovYThjCRg5-IFbYJ_NfrlOejqqFc7jmiRTcoHcQ4maL9vS-AB5QwOcsNDeCRZZn12Ic0UhAySpyA3w0amkU2aduLujuBIfryHuILhslfhMIvkGiH0gwa9EZKnt3GVq8XcYLEaSOk0UIsmLw0H-2WvujFPqZud0J_uEIOOkQBBgfHPMnsfEnf2Yf9CrksYctui400xvxMqw4kaQmHC0g7f936FomUcP0ZAyDX-vqOW7s1APqS67h5yRQjwn6uh4Z9qx8sKp--RheVQ9oi30H-22yrz74cFmmJsi-C5jMbbxTsg6Dccq3-ub0-Vn9RC-m8KB45rp1Yq1c0GqDUgM_ruy-pG4-VDSau_WR5fzRmHcrQx01SdVnfm_VvwSXO4QLnMJq6ZbvttZkJ8c0gxLMgRf7Wy_RSwo3TfYkpbUYYZ9VuJCiEPCqfmQVTkmySXBjzMSTclWo9RKiYbAnpmeCrETzUIzxq6fenMWjxBt6INkmEej1ioNf0_-Ng6LhUVqUxuNiMcJaQD8Mprv3RpGfgedkPr697kn2HQpDOYp8AdMVssF2_k6A3fkN7TYDU5MkifoFP1hK6yJ2ZmTNhlIsJV1InOJVZpne-IgR8C5ZzNwUmmy3esQfniNXZSIL4FGhHNC0DzR7XJAMNtjhjoZtgQE3rcBJDseUOndaflpZ3C7fKxaeM408bF1S6NjBHlENUz4Ryk4jbpYmhwmVwuhT9oFB4urTUJxsnzDFejZXCew4ncrsgNfExbtxrJUIppPifDLkL3M3GB2IUJSwHLd-bQj2wqXeOlXxtIy9IQ9uzbyquqYsVmzHv21OGDYTXfPkHoxU8My1UB_tebYu-ivS-uDyylLCo3qi1btrRsMwTXpcxQvojjeKMyhYawK4PCF5Bi5PmyFdhp-sYu0LC5SVcXZS6P7Nflyb3M8Kmez9-Mfmk6lJWFofv9w3n_mRupark07JLcfXaxxwICrGOAVtbP1zbapxeT700SL4etK9ku91XLPvln94efJd3_PpqU63oVO2yY5azNaE_-zh1c0Hrzmhp-S_X_Owz8vOaNa4wJ1ic_ctjNxrnV7fpOnorzh1q1sMpcu4Clp604WIcr3EMv0xGs6EzaJHxRFu_-h3lR8tgy0HQdH6y5HjwrTxa3oCf5gtXqlF493wCSYeO1i92YsjrLNYh9G_0D_eyw3Iucu1QZEbOjJ9xWO6GsJ_b1aY4rhw6TrBPe_0ZtU6Gy0Oni1Ud1i4b3wuLo2hRW3em8fQak4oRrDKtaT_TeGtuDTHwL2yGAXWAuhOZdha-mk2bsqtzr_JlkoNKb_2CkGQR_R0HEzzdnqVoD4qcV3hjB72Ufmky8ceJMOZHbL_WqcmVjyDbCP2PS3940C9cyqx0TPuRvKk5R2sNIV3D_fkpLIjuomIPDcACv042RG6-FhQ19bWYF_2ijQe74WqLmRbHd-w15APrkdVn2TpYUFGDgUCav9Q_a82jKrBUgrDJTCeE3hWC4hrKgaMC_ddDvfSGiqHdiifRCXGa8W-MlC1XoBHtV4unKsFt4o6jwHxYGb_1WNtcz5pS5m-JiSYjYinfFhncMaIw3jlafy9tTrKU54zVwj-0IEPXu8qVknC0UE=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "12 items",
-    },
-    {
-      id: 4,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_HH5t8AgRM9E__5a-7e4z6rEzJiv3MnjHTidifoo0CLXuAy2Mnh9jn_klKGL_lkAu2ZOfxYBJhkmebuPpbjbzArG_hWeSf-aw-ChXWP3oKldxspwgZH9SToAuthFtF3WmrJ3qvmiH9lRalzmUMwXQzLcPleecLIbAPYptpB4kKz8y7_SHH5UhnLS8YAKc7dyiyK-7b7oCO3PTLgD1i67_Qz-jElh1xkMdNqwJdGyVtwiGMcSG6nfIhVwGKZQedZuSNozN6WzOWSQFfL3vBk8BO2NcKakn0WsYp_h9k8A4JNuThwS46ipauUt00rzsvKd_RrCf_DQTd3KYtcBkFNSOOVIQWkPrwQqCQGZAxQTgk-hkzsVpdGahBdpXz-HSZFVHe9EfEA1eHbxId8ZMb4VwvrJDjF6sYZcIVIfOOcfBQ2gP4JthaT2PgZ4gjEOCKjjEf5W63Vx38JssuAsjJKqN6-EbTzdgT29lhMXznglliASMTtgcuypJDXwH4aXv151b0irPBhk6w9wGFgtHV8O3wEFNQDL6KGcC7voZK_AgwLK4J1tnmQikYGHrSRlTrB7aEIp6_3GLyhfpG11PwDc_KR94akEMDJc36T9PMOuRCN9gfu5fx9eGV2wRje_1juxsNIzzZ4iwyyW6duv3VT21Y6JnP_fgMsdUWMNMJngTgar_9N8gLKDYfowK7R7pWslXwZ0KNYq-7VtD1zRCXn695ByLXL3K8eUK-hlr7fj381VhZgYgHXuTCzwXj110yzvKPiYxTtYpRn-S_0QeV0-Ac5AgqKH5Y25HX8METPQw25K4ZYpUJmTH6_mea4P2ICWdpAwqJwtUBEnowY_JbszZU4cU4Rmz75tQOdOH0GKVXtj1L8kg0FgBah0j6wJHpyM_JNI64dJLVQ5qZ271lCQChqY6JmNLw8EbJ-dXH4V6VRg1HRG0ht7PuVSSfNg146zf2UfV5LKaKJrKghQ5kTaraeEbBlFTJJ6ZyXcpAkJZ_Kqm1193Zndtx1sDd--BuNvkXTVQq6Y1WjJEeOixuni7bgRz0j2UAxnUe6GnHwf6_ucMdeJJbkEnp9UXdjH0Q_dwOn5sIJWUKBoWZNcHh7OFeW9mxpBDOGM8L8z38x8unfy1EH-P32IV846-Xma4QOD2rXQKc9UGKdc7c6Mlm9DJJFSGr9aYxhdTqhpRLAHD14gLqi3BgB0HUk85LCSSmzDsgG_buT8eLOs1eKuFCdJo346WyLJdGWm1d4WUlW4CHTH_vMMgDbNRtU8DPXHGgTZAC8nbaSPkAAHg1nTwPQWbA5srfXq1eu1TvOmyoR-QMVi5sA6tG_DN8MvgOCYXEIskcuIo2PxYfd4Ix2rDqf9FNe6Z8x3YCLvIy32XAH6d7w2Ucq2c-DxDjWitBZb6pDNbszI7KJ1qhzIw7Gc4BuOM-xkUP_3cuNUXko2cAYRQXbKSAxF_np1mUC0v-8SGWMvY6LX-acyK9lZ_HiEy5Hk72Wu_avCLgEZHXePtbrjjagv2OBrJ_Ln5EH8KbPi6NTt2fQYx8Q3faJOGVwPyLewQQP6bF7vaZLkta5YPZf1jnLaksGZOZqjxqzLirWgSHjGaPaMxNCNtsgqikIYgyUGgbk4QC6NTwZjSP4NIXVyhhEKQK5JTnBciZEbFq6FARMJo1WK616fVSNBFXuo67c9BkPCPxXYEFNr966pz22lERSCln1fa20HCx0RHeSyPg=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "43 items",
-    },
-    {
-      id: 5,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_EGicuZMFuLTlalEnX9EQMatyMGtePJ1JYYBUdM56JR3f2YS2DVhA0W6gf-0aQz3UeZkA0eibwMHFln7vIxvswJhiSXJLT-Ii4lX9UWk0Ljil0l1KShdYCF50NoNZ2mFKpwZmKv2KpbdyMexZ7w4gdu5IdnyRjKolVbWwYf-PHf6MDuABXr6663wWr1PmrrdVt7gJ_v1XqURsE6PJKFKvT17HY2TApGV_sWtp89lELljocO6qcgyATtTzKXx1KYw-YCgi65XXWMe_QCC-2yE6BKhxBfZ3xCwOshjyvvK-YM12giogR_sRIIS3SDoKMhDJklwGxzm8oVm41tFore2fMsAtF6_KTeOsufaXr4q0cbghmEb2jVXd7PDqnTpq7AzTN71J3-cPQMEPQgwcxeuuJY47AajqouRQYzfXu3nu9Q9osyOJoR0IoRGaJ4g_YFiManeVUz6QTHbk1G653CE0sQSUUxPQIEAo7gPDMT99Kzcja_uKRBRvCDiJuR17EBqr8HmYbox0RyEvFIqfIPigfdtBTPIZgUUdQG2EqDtu92WB99O0Y_5wAm0ZkQzB7b7Zd45AD49rs11uiBHmjWeGkExqxa9d97rpHVjzb4SNBofUS_USTAtFFGoVxsNvsIjMPP3dDWmPO30j01ecy2omadjtlPb0XC6yw5ICs2472xtUG_T7EAvqeCj3Uv5WT_iRixDnGyFWYfJs-xWrHl9iZb0962yibtFk7XLusGy_Dwe8hh3iSH6mt7syumvqtCfVpSfRN-0hPC-34NMT94v6KKLNpIQQmHq63OfBlbXZNSP6qHquD5UhbYf_NruJ3N70_aB6DDXUc1bG0HRHEsoKp_uhiQRXcsC7TrcociMBrT0mkepBTReAb24QfCXzNmWD8oS86SA0U1AVg1QZhQXiNWixdvZqOPkgO58sqmseEsoT4bqXB9gDFlNmKP2ILP6JknxlLd_hSKHHadp_l2mktfs0tcjysnCZv0SxbNM6jsA6Dgbj9mBEYSUvZClhxtnDlZ06oONBYCVuQ0hGi3YyfnICIxJ64p-lgV7mFdPY_hcyGcjwlab6g_V4qUIXr6W9qrrlaeyspZNTc6iDansv-Z1EaSDY_YlEZ3U03sDx4wNhNUOuPzq-C-XBz58fjVCFADWyR92FlG7OjEEel6fD2o0EhEYBoL8eVOp15_AStw9E2IZdxtn9-AKDfG2AC-BYDLnqIdE-LRZW83QX_VxPHaLxE4B6t3OfzOUPy6-Ojfc3UBtgqs1HoPngdZOckkcPITg25KzMhTbYdQ7R7IFwZmF3nlnHQXTzI4H_CvOJBliTHfs_LWYOWIdp13dKD11YouEzyBGSGVUQuPZ91boJi0wtXE5TCDwIjf5vg66NX5bGBaxzCwmS_qFXol_Nq7vgtrPtCMgqwI-xm0t3x32BTKPk2n91MBT50bAXOzNG7q8kzrBvqJ7TSbFLUQ7hzIYIbMuopJKrb-EWgzckgho6mbPUypK2t9cZ-b0I-frUg7H37LBwvhlLqGPu-fMGn_BqB2-KpTS8mBU7T9skgNbrFgylwkRTOIPcqJzacVrO7M5_PdFOLyZoLGWUrL8LbJN9IxITdcPGVps3lN8r78dcM6WWnrHMajMqIBLHih_gDNUmADU4t1bKsHYLdIfr5Ju8h0VvGlglTahsCp3WRRDBPgXUMwLP3yVpp1gKAMYRCJ_uha3H6H2qWH-T_PuxE=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "10 items",
-    },
-    {
-      id: 6,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_HC9cDDa9jD8atYnmM493GwT_ZKJ5KsQQvBSLzS9qCc_tEw-jf-8V8iFAjrKEdRdH6p1W_2wOc4kKTtNJxxHf4qsLPp7qapZVvemBoMM6NXuStT8mZlg-fb5XVuR6_T2IN5fXr-4Pa8HagXyz-7QEVSNpw8_-7bl_LKuN-92caZBu9-r0EGriBI--KaEG3el3JjQW2QnW1VAmdr1MIJPWPXLkVnNwYzuV9XVEw-YQkUY4twj5e0Hz5ac1lSWqieMZafWmDpUiPwYjFVyGisQL1d750F_Iq06JfPXjNZYL7NTX-rI17rxMDEKg3Vo-hMvUdryG3_eSYfWOjZODQAnWtAScR4yLnuCHhOjpLaMzrBJp4PNkUJiCZEVRAScyEw61ELbhlYzjvIQZ2HHpZPkF49N2FezSD6iI0UYvIBX8OpyRYZQbESCU0wizjAYSYpVQSMrOE_qgVC-AtL4DSPWhX2CzXPAKUIjs8TJIn080bjZWfu1nBFfbrLVNMOBClfzj0vXlOARFan4fli2tGfT24vixAfh_bMcU6NB6HRJTcA370tb92yM11WMTZC1pjbutbvz_7ARVkpTY0DZPKnO2Q5qDmjogE8r4p3lp9L9i2kBpIiIm6ycaN4iJUkX5HwnywIFvvz19KZmgBwwBy8XeWUjmuwwXcM3o_RZe1uDQeoAXFFRfhJqtB4jLVkIYW_DKsQPJgM20icgmLrrB8FvNN8agiYAueuZv1YtYEqelMMUaf8G1XshFRscnPYjUHdV4DW813PQxRso0dnzwaZnTPU1vnH_hK18Bz7eXWxR3og30y_N7u6kzIbuE-ZgOPui5I_5FiALQYfsLyFtGcDVtk3nyltFljUztGYx6YqE45_Hnzmo5IoWIhhCSEnvBj8EByitGrRhOqV_KwTtMUCfMVIpsaKv1jKWRU_BulNK0uKSSFUr5WLcNQV7qsfWyjtHHZdn1AvnNDSCa9t0auQp4s_SzfwlWsDtVM-964Ewk3VTqwk-Z85ZKUySt07bn9gcafrUd9_fK0c8vGCNGTt2PQ6kGX--GjAxbhjoB7YGZs9nVzcda59HTTakDXcKrLy9lK7CzCmv8kEzPnbPabosWYJy6DLc0WVnEjs7DRI6eEmVR2ZRM161_GB_JNqBOMVOmQ23IQAdtfOJ9HpD5q7-cA9vZIw1bfVDWsH5lf493mShCMCvT10JEgPPCbKXNOwYlb1vy7FfsBjl4JLHEOGkEDAjyh235f_SXHE8ZwkehNqs0CPFBFwGCRCwjrrLswHv5hF7G5mhDu0SjRaINMRKv7tuzk-13wkQ0Z4-56ALSS7drS468Q1YHqKipAzTCXTGgc8J2ymGTpael4DYn-qf7vcpkzlI5yHufrxu0eWY20kPPNHvPkuVWDsdpxBLxmsh2GrzJaMLb9XJXn5uDlAmPai7Y_04ncQeY-vusIIPHkrb91LrtVg8RqRLe4g6P-vdyjwJ_wX0nf9SFTOKt_KV0Gp5XJ0J4Q236P4kXdBcANLogsI56yHZSeHSaEB8F4FTtcQVBW8N-nG-8c5QrfH18GoZUY00wiTdbgFBLMkciyKJcozCXkTKazfYTBHDmB_gMCWoytSueSeXebe00D8MHPCy_YtFlfa4jclq8nZstvu7Y-wBxGrfrHjXePtkKqIDKy0zt2wYkU1YY5BT4L_XsAHlPTcOslBDz6SvxmRNrWbDl1V8Y_7NK7Ptso0mRQ=w1920-h927",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "33 items",
-    },
-    {
-      id: 7,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_EmxPp4_Txu84nx-hzF45JKSTlpUAsZpMpka4Zk5h6C-WGgNkse6Z3bBjv5f8sat06bUx5ar8KkHWO0OKz9en9UvLcfZrbtPIac_pdvUf3xKMU-z2Xb6AD-0v6QvoCGHOf6XSnkuk0dLSmXbOGGNH7x301QawCq31brRzSDF9ppTz5kkO_cuaAYH7eaC4YlpbSbfhLG2z0LZvjTrRk2lxO8Fzumx0K_eLkYIOY1I1B3cz8fCQByoKo9DibBfc8J_IVS-1rwbrQl4cv5AQ1M-rnuRBlVa0k7RpMkogm4HVw3189CwOAVn__Jw8p3tmw52MNoiHgqc6-z9aBwTbxq-Y4_SdxwBdlkXOubucTTYuhIqdYD-KrI3KYqPYljTD1QEod9e0fmQQCCwze6ZEtg5wYVmQveX8QZobOv-mVq1oStf2m4Ix31gFKerEcAcQ3x_3LUC0p46-VHBQE1U0ItaFmA_UfYSZRgtGGnbrLWCpLFVcSMDzS3R4dsRuZdxHPsFcMumbO2hqaYpSTOog5t7YDT6gEsglwsIFZaamA5MYvhUf2uxvzgymvs_7Y7Uhna_Aemi6yGwZIJor6JrVfQ_KkXkmgxNj7L-mR0ird06Wh1feApc98pHFydYKXwKf3Cqe6jO4fEy5wlsPppKnqrq5kK52YVeRifG0A9jiA0lz4kNk4Hxl4ZZZYDWg9EarpZd8BqE7EKldYz7-PIDc6YkWM5isnRAzLGqcmxHQ5FmdXyR-L9oHM4xIucJ_ohX2cddTYzqzP0QIaiIjkRYVteuXG3gKdjUoM_AQrL531KMwM42e1uEy_M-jYsVh_EHPXWs9xBUYAjXX0zlgmpNx_12P9cmsCSqaQgc8CQr7wpvLthXzdCpIpz2l-b1QtHQ6vU9-zppQWjIq1NOMqzwM7q4nXhV1xBT8S4c9J3z62IP5HWSPdr8HdWLXE5-i7wWr7psC52_R8hTVjjxnFEK_ZggYXF3CHp9GtW_z3OBVzmr4O9vO-PX6q-oa85rLrzX8AfO-yXmjtZE8ZEzjuSkwbstsTQIbA4P2Cs6UMe2gZzCDVXLdwUEyuKDarTKToKtoboijTDd751KD1DI6Ak3E7cYdTjBkj1qfhe-mvKw0kFiQeavaL9oH-OE9WxncKg5nonlaKabW3FcehxigHNZ75QAIMSumgKnwiZ4xPm1Wd3TWvQCOILLEzq3lBZYInT6PQzmfsrBRIj3cjoOIZTYgYddiAM_YgYrseXo_jFVlF45qt7D2O1RehcKvwNA9ftCgeCDXqpokGG3i72taDqH4Hg9EUrFdX_hcOZg96cp85QGHnzIIiQbMu1ej1XrW02KZH15TiW_djCHLaZs01YIJ_YDubv9SmrvpTXlWwlC-SlK6cmMjQcN0AM1WF3Q7Fl9pQKeKMBdGlEMe4FElcl6gDwSihkUz1AjIHH2G6_1dzLWK_g_PByO54oW5K42NeipGMBf9hrDEJqT4IqYtWqRcErmnqfGrORAXGtjpqbkqOduwg7LFxSWCKeVANWYAyfF6BicaMr2upNRA98xqu0SCGVoUZIXcKoe9MwhMXQRLJWSfzGOGuvBSoiXbQ0-YNkDOo_Nys16O8Cdo_YgzKp8gXTPLJ0weejbaAXo5pdfIK7puPYAmgdrg4PpKjdxG5u-jMX6LKrrleU97LzApUx2yegKjiLqenePbbhXg06LLBvVzenfWrhX94HidSdv-lnlRg=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "29 items",
-    },
-    {
-      id: 8,
-      src: "https://lh3.googleusercontent.com/fife/ALs6j_HVnGpeCeJkbAnGwzDuME52FqMJ7SWycfCDlnLMy602DGVpBxEyypHeL2bjZSoV0DzZhGORiAEYk3fF0i68XxhsVWt4Bo3zgGlkNvSSZ9ypalqvhR_mIYl6q7zWQHv9nT21iOk7cyq1IEbpvSDeVNx3G90TqtNEAJXVxRcDqnOWmjzG_3cXEZwax_bpgBslPEj78wdXPh5xKIxDHZn7Zfn0Ad2pR1k9i2ZtnfdocjHCs_hXV9egZZ9rsyB4at0vj8NHHl4gO7xO6gaLumoARPhIh8-UnRccYvgsp0AhnPpdumsSHJIIpRzJwa34KQAtGUY5yR-d1ktp7yoh12uS9dOPHUSje5rFN5C1nercKMUKnmXw8QOH2oQsIfkSBiND_9vihwulJnBVJPHpd1kVDSHn28AwQQ4IC0REC_7VcV_My1yrAXCE0bjq7zbhzLzUObyJ8xVxOt5QDqL7cAmiy28kQkrLmfcC9yS2-r7yAscwDLuyJOZTFFcxI9JD_QhUriQw6ZzYLCRV2VYaRWu3zRDySiAd3J8VXVLfDJ1Q_zwYP7t2v1WgujPdT-HnNmWnlzQ8FpedYCgZVdW_dHpFPXjj9G1tj6k7OC4R6oRvxxORPUEvGXOHoO2Ppx62JohxeMgr4V-77-2SeH-plM6H_EFD7EAtTnptti5iY0J-7yejocGLqh1mEOIdu61SeIRJr12TbSlC-3S25k8a_qz7wiZR7xWQF6QWv_bSvuwQMXCsW8WMQGF-daU_tYkUyIdLtstcqla6tnPajJkuaVFcob15Yinc-O2dVzMBMMIzOLEZRUbSGnjaIVymge-VChubU2F7c7Xsmv-7MwOitLWDd9PQlhNqAEIpnQyzWTAdGZs6XqkNZUoccxxd4FnfI1WRBhzaWZetaZPgTGt7LuRdQH1LmXl6BnVz1RrMijSbsBjSRcCiU_gOx_VNG0Wd6MKJuT7s863qUcXvooKE3Djn50vfQsLIZvLtM7OowvIpcyUFL_7q9-EC4EpffOFtuXBoSDGlqaKwcjUK7ri_sfTTjl3acVo-QuVGXVxA7acZfJu3GAhJdG8VmTgBUYRZYMDN4E3iFdVdYtmmH5ujFPQe6-53QI2ElP1uJTCEwF3EijSusgN_4ZqVq6khEvsdRgg0UOoEZOtkOhZxqDvuhShAwDvfkJsYx0p6C4L_M42Xjcc5fRupvs40KwuupVR5I5Pxpoy9Kbldk7_xbfl9EyOGNln6DUFTSf8LqVBrKIdhKWosfEp1CxiLFRyjDSO7XlXpC7WfZj9gYiwVuOdPolBwZwDPsFYombJTJzWdWJ-7VQRa-J4XDMUZoCJrdnDTm58QjhqdOuAlbF3ERBftA6kfC5e53Es71C5S9p8_taImK3_VbzJdmLspxv1MnBtG7_RDefmPeHRWKIteKLTv3-p2Uo68z20I0f-ZuSI8KxfCuGjQbulFKpi2X40TcELeFFxUgoWPlbMhaT1hArJGoF4FpEQS8w0kpR_PGujDQP4QeVLv7jcsi0tD1CcjxKAVibaurRXKi4XJmvIkh7VsxerzroP-gghnzzvGBu8dshCpy-w8O_MlEvix3DPyP18icAN3t3Omn3VAAg5JDg9W4N_FIbfmcwtzLBWf-wSfYfmxaz1eEaJ9lSDVOBI5yMxAyGTEunPuu4yNCrQ6jaNyRKtjX4dRY3lr77c6zlaB7idBEu6zONCxSn-5nwG5qdBSZg=w1920-h492",
-      text: "Garten Spaten",
-      alt: "Image 1",
-      items: "31 items",
-    },
-  ];
+  const [category, setCategory] = useState<ICategory[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [productCount, setProductCount] = useState<{ [key: string]: number }>(
+    {}
+  );
+
+  useEffect(() => {
+    const allCategory = async () => {
+      const data = await GetAllCategory();
+      setCategory(data);
+    };
+    allCategory();
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const productsData = await GetAllProduct();
+      setProducts(productsData);
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const demsoluongitem = () => {
+      const count: { [key: string]: number } = {};
+      products.forEach((product) => {
+        if (count[product.categoryId]) {
+          count[product.categoryId]++;
+        } else {
+          count[product.categoryId] = 1;
+        }
+      });
+      setProductCount(count);
+    };
+
+    if (products.length > 0) {
+      demsoluongitem();
+    }
+  }, [products]);
+
   return (
     <div className="collection">
       <div className="items w-[90%]">
-        {collection.map((item) => (
+        {category.map((item) => (
           <div key={item.id} className="item">
-            <img src={item.src} alt={item.alt} />
+            <img src={item.banner} alt={item.name} />
             <div className="inf">
-              <p>
-                <span>{item.text}</span>
-              </p>
-              <p>{item.items}</p>
+              <div className="tt">
+                <p>
+                  <span>{item.name}</span>
+                </p>
+                <p>{productCount[item.id] || 0} items</p>
+              </div>
             </div>
           </div>
         ))}
