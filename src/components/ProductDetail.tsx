@@ -192,9 +192,9 @@ const ProductDetail = () => {
                       style={{
                         width: `${(count / product.reviews.length) * 100}%`,
                       }}
-                    ></div>
-                  <span>({count})</span>
+                      ></div>
                   </div>
+                      <span>({count})</span>
                 </div>
               );
             })}

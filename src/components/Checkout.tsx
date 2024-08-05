@@ -1,14 +1,17 @@
 import React, { useContext, useState } from "react";
 import { CartContext } from "../context/cartContext";
-// import { cartType } from '../interface/Product';
+import axios from "axios";
 import { formcheckout } from "../interface/User";
+import { IOrder } from "../interface/Order";
+import { useNavigate } from "react-router-dom";
 import "tailwindcss/tailwind.css";
 
 const Checkout = () => {
   const context = useContext(CartContext);
+  const navigate = useNavigate();
 
   if (!context) {
-    return <p>Error: Cart context not found.</p>;
+    return <p>Lỗi: Không tìm thấy ngữ cảnh giỏ hàng.</p>;
   }
 
   const { cart, removeFromCart } = context;
@@ -18,9 +21,10 @@ const Checkout = () => {
     address: "",
     phone: "",
   });
+  const [successMessage, setSuccessMessage] = useState("");
 
   const totalPrice = cart.reduce(
-    (total, item) => total + item.salePrice * item.quantity,
+    (total, item) => total + (item.salePrice ?? item.price) * item.quantity,
     0
   );
 
@@ -31,34 +35,63 @@ const Checkout = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    alert("Checkout successful!");
-    cart.forEach((item) => removeFromCart(item, item.quantity));
+    // Kiểm tra nếu có sản phẩm nào có giá bằng 0
+    const hasZeroPriceItem = cart.some(item => (item.salePrice ?? item.price) === 0);
+    if (hasZeroPriceItem) {
+      alert("Một số sản phẩm trong giỏ hàng có giá bằng 0. Vui lòng kiểm tra lại giỏ hàng.");
+      return;
+    }
+
+    const order: IOrder = {
+      ...formData,
+      items: cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.salePrice ?? item.price,
+        quantity: item.quantity,
+      })),
+      totalPrice,
+    };
+
+    try {
+      await axios.post("http://localhost:3000/orders", order);
+      setSuccessMessage("Thanh toán thành công!");
+      cart.forEach((item) => removeFromCart(item, item.quantity));
+      setTimeout(() => {
+        navigate("/order", { state: { order } });
+      }, 2000);
+    } catch (error) {
+      console.error("Lỗi khi lưu đơn hàng:", error);
+      alert("Lưu đơn hàng không thành công. Vui lòng thử lại.");
+    }
   };
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+      <h2 className="text-2xl font-bold mb-4">Thanh toán</h2>
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Cart Summary</h3>
+        <h3 className="text-xl font-bold mb-4">Tóm tắt Giỏ hàng</h3>
         {cart.length === 0 ? (
-          <p>No items in the cart</p>
+          <p>Giỏ hàng trống</p>
         ) : (
           <table className="min-w-full bg-white shadow-md rounded-md overflow-hidden">
             <thead>
               <tr className="border-b bg-gray-100">
-                <th className="py-2 px-4 text-left">Name</th>
-                <th className="py-2 px-4 text-left">Price</th>
-                <th className="py-2 px-4 text-left">Quantity</th>
+                <th className="py-2 px-4 text-left">Tên sản phẩm</th>
+                <th className="py-2 px-4 text-left">Giá</th>
+                <th className="py-2 px-4 text-left">Số lượng</th>
               </tr>
             </thead>
             <tbody>
               {cart.map((item) => (
-                <tr key={item.name} className="border-b">
+                <tr key={item.id} className="border-b">
                   <td className="py-2 px-4">{item.name}</td>
-                  <td className="py-2 px-4">${((item.salePrice ?? item.price) * item.quantity).toFixed(2)}</td>
+                  <td className="py-2 px-4">
+                    ${((item.salePrice ?? item.price) * item.quantity).toFixed(2)}
+                  </td>
                   <td className="py-2 px-4">{item.quantity}</td>
                 </tr>
               ))}
@@ -66,13 +99,18 @@ const Checkout = () => {
           </table>
         )}
         <h3 className="text-xl font-bold mt-4">
-          Total Price: ${totalPrice.toFixed(2)}
+          Tổng giá: ${totalPrice.toFixed(2)}
         </h3>
       </div>
+      {successMessage && (
+        <div className="bg-green-500 text-white p-4 rounded mb-4">
+          {successMessage}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow-md">
-        <h3 className="text-xl font-bold mb-4">Shipping Information</h3>
+        <h3 className="text-xl font-bold mb-4">Thông tin Giao hàng</h3>
         <label className="block mb-2">
-          Name:
+          Tên:
           <input
             type="text"
             name="name"
@@ -94,7 +132,7 @@ const Checkout = () => {
           />
         </label>
         <label className="block mb-2">
-          Address:
+          Địa chỉ:
           <input
             type="text"
             name="address"
@@ -105,7 +143,7 @@ const Checkout = () => {
           />
         </label>
         <label className="block mb-4">
-          Phone:
+          Số điện thoại:
           <input
             type="text"
             name="phone"
@@ -119,7 +157,7 @@ const Checkout = () => {
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded-md"
         >
-          Complete Purchase
+          Hoàn tất Mua hàng
         </button>
       </form>
     </div>

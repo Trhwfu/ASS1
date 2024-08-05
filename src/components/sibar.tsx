@@ -44,7 +44,7 @@ const Sidebar = ({ slCategory, setslCategory }: SidebarProps) => {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h2>Kategorien</h2>
+        <h2>Danh mục</h2>
       </div>
       <ul className="sidebar-list">
         {categories.map((cat) => (

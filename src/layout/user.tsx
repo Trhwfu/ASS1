@@ -3,13 +3,14 @@ import Header from './user/header'
 import Footer from './user/footer'
 import { Outlet } from 'react-router-dom'
 
+
 const LayoutUser = () => {
   return (
-    <>
-        <Header/>
-        <Outlet/>
-        <Footer/>
-    </>
+    <div>
+      <Header />
+        <Outlet />
+      <Footer />
+    </div>
   )
 }
 

@@ -49,7 +49,7 @@ const List = ({ product }: Props) => {
       <div className="Listproduct m-0 ml-6">
         <div className="pick">
           <div className="luachon">
-            <label htmlFor="SortBy">Sort By:</label>
+            <label >Sort By:</label>
             <select id="SortBy">
               <option value="Newest">Newest</option>
               <option value="price_asc">Low to High</option>
@@ -57,7 +57,7 @@ const List = ({ product }: Props) => {
             </select>
           </div>
           <div className="luachon">
-            <label htmlFor="Show">Show:</label>
+            <label >Show:</label>
             <select id="Show">
               <option value="9">9</option>
               <option value="12">12</option>
@@ -66,6 +66,7 @@ const List = ({ product }: Props) => {
           </div>
         </div>
         <div className="danhsach">
+         
           {currentProducts.map((item, index) => (
             <div key={index} className="item">
               {item.sale && <span className="sale-badge">SALE</span>}

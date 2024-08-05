@@ -7,7 +7,7 @@ const Cart = () => {
   const context = useContext(CartContext);
 
   if (!context) {
-    return <p>Error: Cart context not found.</p>;
+    return <p>Lỗi giỏ hàng</p>;
   }
 
   const { cart, addToCart, removeFromCart } = context;
@@ -27,33 +27,32 @@ const Cart = () => {
   };
 
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+    <div className="p-8 h-[auto] min-h-[298px]">
+      <h2 className="text-2xl font-bold mb-4">Giỏ hàng của bạn</h2>
       <div className="flex justify-between mb-2">
         <button
           aria-label="Remove all items from cart"
           className="bg-red-500 text-white py-2 px-4 rounded-md mb-4 md:mb-0"
           onClick={handleRemoveAll}
         >
-          Remove All
+          Xoá toàn bộ
         </button>
         <h3 className="text-xl font-bold mb-4 md:mb-0">
-          Total Price: ${totalPrice.toFixed(2)}
+          Tổng tiền: ${totalPrice.toFixed(2)}
         </h3>
       </div>
       {cart.length === 0 ? (
-        <p className="text-center">No items in the cart</p>
+        <p className="text-center pt-11">Không có sản phẩm nào trong giỏ hàng</p>
       ) : (
         <div>
           <table className="min-w-full bg-white shadow-md rounded-md overflow-hidden">
             <thead>
-              <tr className="border-b bg-gray-100 ">
-                <th className="py-2 px-4 text-start ">Ảnh sản phẩm</th>
+              <tr className="border-b bg-gray-100">
+                <th className="py-2 px-4 text-start">Ảnh sản phẩm</th>
                 <th className="py-2 px-4 text-start">Tên Sản Phẩm</th>
                 <th className="py-2 px-4 text-start">Giá</th>
                 <th className="py-2 px-4 text-start">Số lượng</th>
                 <th className="py-2 px-4 text-start">Xoá sản phẩm</th>
-                <th className="py-2 px-4 text-start">Thanh toán</th>
               </tr>
             </thead>
             <tbody>
@@ -84,7 +83,7 @@ const Cart = () => {
                   <td className="py-10 px-4 flex items-center justify-center">
                     <button
                       aria-label={`Decrease quantity of ${item.name}`}
-                      className=" text-gray-800 p-1 rounded-md"
+                      className="text-gray-800 p-1 rounded-md"
                       onClick={() => removeFromCart(item, 1)}
                     >
                       -
@@ -92,7 +91,7 @@ const Cart = () => {
                     <span className="mx-2">{item.quantity}</span>
                     <button
                       aria-label={`Increase quantity of ${item.name}`}
-                      className=" text-gray-800 p-1 rounded-md"
+                      className="text-gray-800 p-1 rounded-md"
                       onClick={() => addToCart(item, 1)}
                     >
                       +
@@ -108,30 +107,23 @@ const Cart = () => {
                     </button>
                   </td>
                   <td className="">
-                    <button className="bg-green-500 text-white py-1 px-4 rounded-md">
-                      <Link to="">
-                        <button
-                          aria-label="Proceed to checkout"
-                          className=" py-2 px-4 rounded-md"
-                        >
-                          Checkout
-                        </button>
-                      </Link>
-                    </button>
+                    {/* Removed the inner button and Link here */}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div className="mt-4 flex flex-col md:flex-row md:justify-between items-center">
-            <Link to="/checkout">
-              <button
-                aria-label="Proceed to checkout"
-                className="bg-green-500 text-white py-2 px-4 rounded-md"
-              >
-                Checkout
-              </button>
-            </Link>
+            {cart.length > 0 && (
+              <Link to="/checkout">
+                <button
+                  aria-label="Proceed to checkout"
+                  className="bg-green-500 text-white py-2 px-4 rounded-md"
+                >
+                  Checkout
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       )}

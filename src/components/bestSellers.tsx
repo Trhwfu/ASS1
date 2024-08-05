@@ -34,7 +34,7 @@ const BestSellers = ({ products }: Props) => {
   return (
     <div>
       <p className="ml-40 mt-7 font-bold font-sans text-3xl text-green-900/70">
-        Best sellers
+        Sản phẩm bán chạy
       </p>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10 mt-5 shadow-lg drop-shadow-mb bg-white mb-10 ">
         {topSellingProducts.map((product) => (
@@ -43,14 +43,14 @@ const BestSellers = ({ products }: Props) => {
               key={product.id}
               className="relative product-item flex flex-col w-64"
             >
-              <div className="h-[300px] w-64 overflow-hidden relative">
                 {product.sale && (
                   <span className="absolute top-8 left-0 bg-blue-950 text-white text-xs px-2 py-1 ">
                     SALE
                   </span>
                 )}
+              <div className="h-[200px] mt-16 w-56 overflow-hidden relative">
                 <img
-                  className="  w-45  mt-9 hover:scale-110 duration-500"
+                  className="  w-96 hover:scale-110 duration-500"
                   src={product.image}
                   alt={product.name}
                 />

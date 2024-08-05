@@ -31,6 +31,7 @@
 .collection .items .item img{
     width: 100%;
     justify-content: center;
+    object-fit: cover;
     -webkit-filter: brightness(70%); 
     transition: ease-in-out 0.3s;
 }
